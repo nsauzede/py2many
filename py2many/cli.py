@@ -38,6 +38,8 @@ from pygo.transpiler import (
     GoNoneCompareRewriter,
     GoPropagateTypeAnnotation,
 )
+from pyv.inference import infer_v_types
+from pyv.transpiler import VTranspiler, VNoneCompareRewriter
 
 from py2many.rewriters import (
     ComplexDestructuringRewriter,
@@ -213,6 +215,22 @@ def go_settings(args):
     )
 
 
+def v_settings(args):
+    v_args = {}
+    vfmt_args = ["fmt"]
+    if args.indent is not None:
+        v_args["indent"] = args.indent
+        vfmt_args.append(f"--indent:{args.indent}")
+    return LanguageSettings(
+        VTranspiler(**v_args),
+        ".v",
+        ["v", *vfmt_args],
+        None,
+        [VNoneCompareRewriter()],
+        [infer_v_types],
+    )
+
+
 def _get_all_settings(args):
     return {
         "cpp": cpp_settings(args),
@@ -222,6 +240,7 @@ def _get_all_settings(args):
         "nim": nim_settings(args),
         "dart": dart_settings(args),
         "go": go_settings(args),
+        "v": v_settings(args),
     }
 
 
@@ -270,6 +289,7 @@ def main():
     parser.add_argument("--nim", type=bool, default=False, help="Generate Nim code")
     parser.add_argument("--dart", type=bool, default=False, help="Generate Dart code")
     parser.add_argument("--go", type=bool, default=False, help="Generate Go code")
+    parser.add_argument("--v", type=bool, default=False, help="Generate V code")
     parser.add_argument("--outdir", default=None, help="Output directory")
     parser.add_argument(
         "-i",
@@ -295,6 +315,8 @@ def main():
             settings = dart_settings(args)
         elif args.go:
             settings = go_settings(args)
+        elif args.v:
+            settings = v_settings(args)
         source = pathlib.Path(filename)
         if args.outdir is None:
             outdir = source.parent
