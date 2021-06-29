@@ -359,7 +359,7 @@ def _get_all_settings(args, env=os.environ):
         "nim": nim_settings(args, env=env),
         "dart": dart_settings(args, env=env),
         "go": go_settings(args, env=env),
-        "v": v_settings(args, env=env),
+        "vlang": v_settings(args, env=env),
     }
 
 
@@ -567,7 +567,7 @@ def main(args=None, env=os.environ):
             settings = dart_settings(args, env=env)
         elif args.go:
             settings = go_settings(args, env=env)
-        elif args.v:
+        elif args.vlang:
             settings = v_settings(args, env=env)
         source = pathlib.Path(filename)
         if args.outdir is None:
