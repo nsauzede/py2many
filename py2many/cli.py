@@ -333,7 +333,7 @@ def go_settings(args, env=os.environ):
     )
 
 
-def v_settings(args):
+def v_settings(args, env=os.environ):
     v_args = {}
     vfmt_args = ["fmt"]
     if args.indent is not None:
